@@ -31,7 +31,7 @@ under the License.
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
+		<java.version>11</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 
@@ -108,6 +108,28 @@ under the License.
 			<version>${log4j.version}</version>
 			<scope>runtime</scope>
 		</dependency>
+
+		<!-- Test Dependencies -->
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-test-utils_${scala.binary.version}</artifactId>
+			<version>${flink.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-runtime_2.11</artifactId>
+			<version>1.13.3</version>
+			<scope>test</scope>
+			<classifier>tests</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-streaming-java_2.11</artifactId>
+			<version>${flink.version}</version>
+			<scope>test</scope>
+			<classifier>tests</classifier>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -117,7 +139,7 @@ under the License.
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.8.1</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
@@ -197,7 +219,7 @@ under the License.
 									<pluginExecutionFilter>
 										<groupId>org.apache.maven.plugins</groupId>
 										<artifactId>maven-compiler-plugin</artifactId>
-										<versionRange>[3.1,)</versionRange>
+										<versionRange>[3.6,)</versionRange>
 										<goals>
 											<goal>testCompile</goal>
 											<goal>compile</goal>
