@@ -18,6 +18,12 @@
 
 package com.singingbush.flink;
 
+import com.singingbush.flink.datasource.DummyDataSource;
+import com.singingbush.flink.filters.NewHighScore;
+import com.singingbush.flink.functions.CalculateUserStats;
+import com.singingbush.flink.model.UserScore;
+import org.apache.flink.api.java.functions.KeySelector;
+import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 /**
@@ -36,15 +42,26 @@ public class StreamingJob {
 
 	public static void main(String[] args) throws Exception {
 		// set up the streaming execution environment
-		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+		//final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+		final StreamExecutionEnvironment env = StreamExecutionEnvironment.createLocalEnvironment();
+
+		//env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
 		/*
 		 * Here, you can start creating your execution plan for Flink.
 		 *
 		 * Start with getting some data from the environment, like
 		 * 	env.readTextFile(textPath);
-		 *
-		 * then, transform the resulting DataStream<String> using operations
+		 */
+//		env.fromElements(
+//				new UserScore(),
+//				new UserScore(),
+//				new UserScore(),
+//				new UserScore()
+//		);
+		final DataStreamSource<UserScore> dataSource = env.addSource(new DummyDataSource());
+
+		/* then, transform the resulting DataStream<String> using operations
 		 * like
 		 * 	.filter()
 		 * 	.flatMap()
@@ -57,6 +74,19 @@ public class StreamingJob {
 		 * https://flink.apache.org/docs/latest/apis/streaming/index.html
 		 *
 		 */
+		dataSource
+				.keyBy((KeySelector<UserScore, String>) UserScore::getName)
+				.process(new CalculateUserStats())
+				.print();
+
+//		dataSource
+//				.keyBy((KeySelector<UserScore, String>) UserScore::getName)
+//				//.window(TumblingProcessingTimeWindows.of(Time.seconds(6)))
+//				.filter(new NewHighScore())
+//				.keyBy((KeySelector<UserScore, String>) UserScore::getName)
+//				.max("score")
+//				.print() // same as .addSink(new PrintSinkFunction<>())
+//				;
 
 		// execute program
 		env.execute("Flink Streaming Java API Skeleton");
